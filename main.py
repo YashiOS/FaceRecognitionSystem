@@ -2,10 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 import numpy as np
 import cv2
-import os
 from face_system import FaceRecognitionSystem
-from tempfile import NamedTemporaryFile
-from typing import List
 
 app = FastAPI()
 face_system = FaceRecognitionSystem()
@@ -34,14 +31,18 @@ async def recognize_face(image: UploadFile = File(...)):
     except Exception as e:
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
-@app.get("/users")
+@app.get("/user-list")
 def list_users():
     users = face_system.list_users()
     return {"users": users}
 
-@app.get("/users/{name}")
+@app.get("/user-info/{name}")
 def get_user_info(name: str):
     user = face_system.get_user_info(name)
     if not user:
         return JSONResponse(status_code=404, content={"error": "User not found"})
     return user
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
