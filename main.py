@@ -7,6 +7,14 @@ from face_system import FaceRecognitionSystem
 app = FastAPI()
 face_system = FaceRecognitionSystem()
 
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "FastAPI app on Render works!"}
+
+
 @app.post("/register")
 async def register_user(name: str = Form(...), image: UploadFile = File(...)):
     try:
