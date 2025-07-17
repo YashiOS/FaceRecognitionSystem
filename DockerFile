@@ -1,23 +1,26 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# Install system dependencies
+# Install dependencies for dlib, face-recognition, opencv
 RUN apt-get update && apt-get install -y \
-    cmake \
     build-essential \
-    libgl1 \
+    cmake \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     libglib2.0-0 \
+    libgl1-mesa-glx \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Create app directory
 WORKDIR /app
 
 # Copy requirements and install
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 # Copy app code
 COPY . .
 
-# Expose FastAPI via uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
+# Set FastAPI to run on startup
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
